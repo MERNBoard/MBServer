@@ -1,0 +1,29 @@
+{
+	"name": "mbserver",
+	"version": "1.0.0",
+	"main": "index.js",
+	"repository": "https://github.com/MERNBoard/MBServer.git",
+	"author": "9erikSantos6 <9xerix6@gmail.com>",
+	"license": "MIT",
+	"type": "module",
+	"scripts": {
+		"dev": "tsx watch src/server.ts",
+		"build": "tsup src/server.ts --format cjs,esm --clean",
+		"lint": "biome check .",
+		"format": "biome format",
+		"typecheck": "tsc --noEmit"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.3.14",
+		"@types/express": "5.0.6",
+		"@types/node": "25.2.1",
+		"biome": "0.3.3",
+		"tsup": "8.5.1",
+		"tsx": "4.21.0",
+		"typescript": "5.9.3"
+	},
+	"dependencies": {
+		"dotenv": "17.2.4",
+		"express": "5.2.1"
+	}
+}
