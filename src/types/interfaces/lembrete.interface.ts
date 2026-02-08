@@ -1,13 +1,13 @@
 import type { Types } from "mongoose";
 
 export interface ILembrete extends Document {
-  userId: Types.ObjectId;
-  taskId: Types.ObjectId;
+  usuarioID: Types.ObjectId;
+  tarefaID: Types.ObjectId;
 
-  remindAt: Date;
-  sent: boolean;
-  sentAt?: Date;
+  relembradoEm: Date;
+  enviado: boolean;
+  enciadoEm?: Date;
 
-  createdAt: Date;
-  updatedAt: Date;
+  criadoEm: Date;
+  atualizadoEm: Date;
 }

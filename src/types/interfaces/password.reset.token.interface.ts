@@ -4,11 +4,11 @@ export interface IPasswordResetToken extends Document {
   userId: Types.ObjectId;
 
   tokenHash: string;
-  expiresAt: Date;
+  expiraEm: Date;
 
-  used: boolean;
-  usedAt?: Date;
+  usado: boolean;
+  usadoEm?: Date;
 
-  createdAt: Date;
-  updatedAt: Date;
+  criadoEm: Date;
+  atualizadoEm: Date;
 }

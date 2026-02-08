@@ -1,14 +1,14 @@
 import type { Types } from 'mongoose';
 
 export interface IRefreshToken extends Document {
-  userId: Types.ObjectId;
+  usuarioID: Types.ObjectId;
 
   tokenHash: string;
-  expiresAt: Date;
+  expiraEm: Date;
 
-  revoked: boolean;
-  revokedAt?: Date;
+  invalidada: boolean;
+  invalidadaEm?: Date;
 
-  createdAt: Date;
-  updatedAt: Date;
+  criadoEm: Date;
+  atualizadoEm: Date;
 }

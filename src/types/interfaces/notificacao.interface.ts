@@ -1,14 +1,14 @@
 import type { Types } from "mongoose";
 
 export interface INotificacao extends Document {
-  userId: Types.ObjectId;
+  usuarioID: Types.ObjectId;
 
-  title: string;
-  message: string;
+  titulo: string;
+  mensagem: string;
 
-  read: boolean;
-  readAt?: Date;
+  lida: boolean;
+  lidaEm?: Date;
 
-  createdAt: Date;
-  updatedAt: Date;
+  criadoEm: Date;
+  atualizadoEm: Date;
 }
