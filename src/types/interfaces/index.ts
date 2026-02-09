@@ -1,3 +1,4 @@
+export type * from './auth.token.inerface.ts';
 export type * from './config.interface.ts';
 export type * from './lembrete.interface.ts';
 export type * from './notificacao.interface.ts';
