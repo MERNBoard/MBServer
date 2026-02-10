@@ -2,23 +2,23 @@ import * as z from 'zod';
 
 import { UsuarioRole } from '@/types/enums';
 
-export const UsuarioCreateSchema = z.object({
+export const UsuarioInputSchema = z.object({
   nome: z.string().trim().min(3, 'O nome deve ter no mínimo 3 caracteres'),
-  email: z.string().trim().email('Email inválido'),
+  email: z.email('Email inválido').trim(),
   password: z.string().min(6, 'A senha deve conter no mínimo 6 caracteres'),
 }).strict();
 
-export const UsuarioAdminCreateSchema = z.object({
+export const UsuarioAdminInputSchema = z.object({
   nome: z.string().trim().min(3, 'O nome deve ter no mínimo 3 caracteres'),
-  email: z.string().trim().email('Email inválido'),
+  email: z.email('Email inválido').trim(),
   password: z.string().min(6, 'A senha deve conter no mínimo 6 caracteres'),
-  usuarioRole: z.nativeEnum(UsuarioRole).default(UsuarioRole.USUARIO),
+  usuarioRole: z.enum(UsuarioRole).default(UsuarioRole.USUARIO),
 }).strict();
 
 
-export const UsuarioUpdateSchema = z.object({
+export const UsuarioUpdateInputSchema = z.object({
   nome: z.string().trim().min(3, 'O nome deve ter no mínimo 3 caracteres').optional(),
-  email: z.string().trim().email('Email inválido').optional(),
+  email: z.email('Email inválido').trim().optional(),
   password: z.string().min(6, 'A senha deve conter no mínimo 6 caracteres').optional(),
 })
   .strict()
@@ -27,23 +27,30 @@ export const UsuarioUpdateSchema = z.object({
   });
 
 
-export const UsuarioAdminUpdateSchema = z.object({
+export const UsuarioAdminUpdateInputSchema = z.object({
   nome: z.string().trim().min(3, 'O nome deve ter no mínimo 3 caracteres').optional(),
-  email: z.string().trim().email('Email inválido').optional(),
+  email: z.email('Email inválido').trim().optional(),
   password: z.string().min(6, 'A senha deve conter no mínimo 6 caracteres').optional(),
-  usuarioRole: z.nativeEnum(UsuarioRole).optional(),
+  usuarioRole: z.enum(UsuarioRole).optional(),
 })
   .strict()
   .refine((data) => Object.keys(data).length > 0, {
     message: 'Envie ao menos um campo para atualizar',
   });
 
-export const UsuarioSafeOutputSchema = z.object({
-  id: z.string(),
+export const UsuarioOutputSchema = z.object({
+  _id: z.any(),
   nome: z.string(),
-  email: z.string().email('Email inválido'),
-  usuarioRole: z.nativeEnum(UsuarioRole),
-  criadoEm: z.string().datetime(),
-  atualizadoEm: z.string().datetime(),
-})
-  .strict();
+  email: z.email(),
+  usuarioRole: z.enum(UsuarioRole),
+  criadoEm: z.iso.datetime(),
+  atualizadoEm: z.iso.datetime(),
+}).transform((data) => ({
+  id: String(data._id),
+  nome: data.nome,
+  email: data.email,
+  usuarioRole: data.usuarioRole,
+  criadoEm: data.criadoEm,
+  atualizadoEm: data.atualizadoEm,
+}));
+

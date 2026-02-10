@@ -1,12 +1,14 @@
 import type * as z from 'zod';
 import type {
-  UsuarioAdminUpdateSchema,
-  UsuarioCreateSchema,
-  UsuarioSafeOutputSchema,
-  UsuarioUpdateSchema,
+  UsuarioAdminInputSchema,
+  UsuarioAdminUpdateInputSchema,
+  UsuarioInputSchema,
+  UsuarioOutputSchema,
+  UsuarioUpdateInputSchema,
 } from '@/schemas';
 
-export type UsuarioCreate = z.infer<typeof UsuarioCreateSchema>;
-export type UsuarioUpdate = z.infer<typeof UsuarioUpdateSchema>;
-export type UsuarioAdminUpdate = z.infer<typeof UsuarioAdminUpdateSchema>;
-export type UsuarioSafeOutput = z.infer<typeof UsuarioSafeOutputSchema>;
+export type UsuarioInput = z.infer<typeof UsuarioInputSchema>;
+export type UsuarioUpdate = z.infer<typeof UsuarioUpdateInputSchema>;
+export type UsuarioAdminInput = z.infer<typeof UsuarioAdminInputSchema>;
+export type UsuarioAdminUpdate = z.infer<typeof UsuarioAdminUpdateInputSchema>;
+export type UsuarioOutput = z.infer<typeof UsuarioOutputSchema>;
