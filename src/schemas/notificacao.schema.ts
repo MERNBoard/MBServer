@@ -28,8 +28,8 @@ export const NotificacaoSafeOutputSchema = z.object({
   titulo: z.string(),
   mensagem: z.string(),
   lida: z.boolean(),
-  lidaEm: z.string().datetime().nullable().optional(),
-  criadoEm: z.string().datetime(),
-  atualizadoEm: z.string().datetime(),
+  lidaEm: z.iso.datetime().nullable().optional(),
+  criadoEm: z.iso.datetime(),
+  atualizadoEm: z.iso.datetime(),
 })
   .strict();

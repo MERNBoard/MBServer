@@ -30,10 +30,10 @@ export const PasswordResetTokenSafeOutputSchema = z.object({
   id: objectIdSchema,
   usuarioID: objectIdSchema,
   tokenHash: z.string(),
-  expiraEm: z.string().datetime(),
+  expiraEm: z.iso.datetime(),
   usado: z.boolean(),
-  usadoEm: z.string().datetime().nullable().optional(),
-  criadoEm: z.string().datetime(),
-  atualizadoEm: z.string().datetime(),
+  usadoEm: z.iso.datetime().nullable().optional(),
+  criadoEm: z.iso.datetime(),
+  atualizadoEm: z.iso.datetime(),
 })
   .strict();

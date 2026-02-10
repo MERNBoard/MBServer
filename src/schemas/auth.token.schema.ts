@@ -1,4 +1,3 @@
-// src/schemas/auth.token.schema.ts
 import * as z from 'zod';
 import { TokenTipo } from '@/types/enums';
 
