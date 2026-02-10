@@ -13,7 +13,7 @@ import type { UsuarioInput, UsuarioLoginInput } from '@/types/types';
 
 import UsuarioService from './usuario.service';
 
-class AuthService {
+class AuthTokenService {
   private JWT_ACCESS_SECRET: string;
   private JWT_REFRESH_SECRET: string;
   private JWT_SALT_ROUNDS: number;
@@ -277,4 +277,4 @@ class AuthService {
   }
 }
 
-export default new AuthService();
+export default new AuthTokenService();
