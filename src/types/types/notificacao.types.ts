@@ -1,10 +1,10 @@
 import type * as z from 'zod';
 import type {
   NotificacaoCreateSchema,
-  NotificacaoSafeOutputSchema,
+  NotificacaoOutputSchema,
   NotificacaoUpdateSchema,
 } from '@/schemas';
 
-export type NotificacaoInput = z.infer<typeof NotificacaoCreateSchema>;
-export type NotificacaoUpdate = z.infer<typeof NotificacaoUpdateSchema>;
-export type NotificacaoSafeOutput = z.infer<typeof NotificacaoSafeOutputSchema>;
+export type NotificacaoCreateInput = z.infer<typeof NotificacaoCreateSchema>;
+export type NotificacaoUpdateInput = z.infer<typeof NotificacaoUpdateSchema>;
+export type NotificacaoOutput = z.infer<typeof NotificacaoOutputSchema>;
