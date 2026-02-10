@@ -3,15 +3,15 @@ import Usuario from '@/models/usuario.model';
 
 import {
   UsuarioOutputSchema,
+  UsuarioRegisterInputSchema,
   UsuarioUpdateInputSchema,
-  usuarioRegisterInputSchema
 } from '@/schemas/usuario.schema';
 
 import type { UsuarioOutput, UsuarioRegisterInput, UsuarioUpdate } from '@/types/types';
 
 class UsuarioService {
   async criarUsuario(dados: UsuarioRegisterInput): Promise<UsuarioOutput> {
-    const validacao = usuarioRegisterInputSchema.safeParse(dados);
+    const validacao = UsuarioRegisterInputSchema.safeParse(dados);
     if (!validacao.success) {
       throw new Error(`Erro de validação: ${validacao.error.message}`);
     }
@@ -20,18 +20,14 @@ class UsuarioService {
       nome: validacao.data.nome,
       email: validacao.data.email,
       passwordHash: validacao.data.password,
-    }
+    };
 
     const usuarioCriado = await Usuario.create(dadosCriacao);
 
-    const validacaoSaida = UsuarioOutputSchema.safeParse(
-      usuarioCriado.toObject(),
-    );
+    const validacaoSaida = UsuarioOutputSchema.safeParse(usuarioCriado.toObject());
 
     if (!validacaoSaida.success) {
-      throw new Error(
-        `Erro de validação de saída: ${validacaoSaida.error.message}`,
-      );
+      throw new Error(`Erro de validação de saída: ${validacaoSaida.error.message}`);
     }
 
     return validacaoSaida.data;
@@ -45,9 +41,7 @@ class UsuarioService {
     const validacaoSaida = UsuarioOutputSchema.safeParse(usuario);
 
     if (!validacaoSaida.success) {
-      throw new Error(
-        `Erro de validação de saída: ${validacaoSaida.error.message}`,
-      );
+      throw new Error(`Erro de validação de saída: ${validacaoSaida.error.message}`);
     }
 
     return validacaoSaida.data;
@@ -61,9 +55,7 @@ class UsuarioService {
     const validacaoSaida = UsuarioOutputSchema.safeParse(usuario);
 
     if (!validacaoSaida.success) {
-      throw new Error(
-        `Erro de validação de saída: ${validacaoSaida.error.message}`,
-      );
+      throw new Error(`Erro de validação de saída: ${validacaoSaida.error.message}`);
     }
 
     return validacaoSaida.data;
@@ -80,8 +72,7 @@ class UsuarioService {
 
     if (validacao.data.nome) updateData.nome = validacao.data.nome;
     if (validacao.data.email) updateData.email = validacao.data.email;
-    if (validacao.data.usuarioRole)
-      updateData.usuarioRole = validacao.data.usuarioRole;
+    if (validacao.data.usuarioRole) updateData.usuarioRole = validacao.data.usuarioRole;
 
     if (validacao.data.password) {
       updateData.passwordHash = validacao.data.password;
@@ -98,9 +89,7 @@ class UsuarioService {
     const validacaoSaida = UsuarioOutputSchema.safeParse(usuarioAtualizado);
 
     if (!validacaoSaida.success) {
-      throw new Error(
-        `Erro de validação de saída: ${validacaoSaida.error.message}`,
-      );
+      throw new Error(`Erro de validação de saída: ${validacaoSaida.error.message}`);
     }
 
     return validacaoSaida.data;
@@ -114,9 +103,7 @@ class UsuarioService {
     const validacaoSaida = UsuarioOutputSchema.safeParse(usuarioDeletado);
 
     if (!validacaoSaida.success) {
-      throw new Error(
-        `Erro de validação de saída: ${validacaoSaida.error.message}`,
-      );
+      throw new Error(`Erro de validação de saída: ${validacaoSaida.error.message}`);
     }
 
     return validacaoSaida.data;
@@ -128,9 +115,7 @@ class UsuarioService {
     const validacaoSaida = z.array(UsuarioOutputSchema).safeParse(usuarios);
 
     if (!validacaoSaida.success) {
-      throw new Error(
-        `Erro de validação de saída: ${validacaoSaida.error.message}`,
-      );
+      throw new Error(`Erro de validação de saída: ${validacaoSaida.error.message}`);
     }
 
     return validacaoSaida.data;
