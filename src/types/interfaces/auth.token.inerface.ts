@@ -1,3 +1,4 @@
+import type { JwtPayload } from 'jsonwebtoken';
 import type { Types } from 'mongoose';
 import type { TokenTipo, UsuarioRole } from '../enums';
 
@@ -27,5 +28,13 @@ export interface UsuarioPayload {
 
 export interface UsuarioAuthToken {
   accessToken: string;
-  refreshToken: string;
+}
+
+export interface UsuarioLogadoPayload extends UsuarioPayload, JwtPayload { }
+
+export interface UsuarioIdentidade {
+  id: string;
+  email: string;
+  usuarioRole: UsuarioRole;
+  accessToken: string;
 }
