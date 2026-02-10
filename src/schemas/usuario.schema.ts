@@ -50,6 +50,7 @@ export const UsuarioOutputSchema = z
     criadoEm: isoDateString,
     atualizadoEm: isoDateString,
   })
+  .strict()
   .transform((data) => ({
     id: data._id,
     nome: data.nome,

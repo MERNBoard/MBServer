@@ -4,16 +4,16 @@ const objectIdSchema = z.string().regex(/^[0-9a-fA-F]{24}$/, 'ID inválido');
 
 export const NotificacaoCreateSchema = z.object({
   usuarioID: objectIdSchema,
-  titulo: z.string().trim().min(1, 'O título é obrigatório'),
-  mensagem: z.string().trim().min(1, 'A mensagem é obrigatória'),
+  titulo: z.string().trim().min(3, 'O título é obrigatório'),
+  mensagem: z.string().trim().min(3, 'A mensagem é obrigatória'),
   lida: z.boolean().default(false),
   lidaEm: z.date().optional(),
 })
   .strict();
 
 export const NotificacaoUpdateSchema = z.object({
-  titulo: z.string().trim().min(1, 'O título é obrigatório').optional(),
-  mensagem: z.string().trim().min(1, 'A mensagem é obrigatória').optional(),
+  titulo: z.string().trim().min(3, 'O título é obrigatório').optional(),
+  mensagem: z.string().trim().min(3, 'A mensagem é obrigatória').optional(),
   lida: z.boolean().optional(),
   lidaEm: z.date().optional(),
 })
@@ -22,7 +22,7 @@ export const NotificacaoUpdateSchema = z.object({
     message: 'Envie ao menos um campo para atualizar',
   });
 
-export const NotificacaoSafeOutputSchema = z.object({
+export const NotificacaoOutputSchema = z.object({
   id: objectIdSchema,
   usuarioID: objectIdSchema,
   titulo: z.string(),
