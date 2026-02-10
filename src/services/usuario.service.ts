@@ -22,6 +22,12 @@ class UsuarioService {
       passwordHash: validacao.data.password,
     };
 
+    const emailExistente = await Usuario.findOne({ email: dadosCriacao.email }).lean();
+
+    if (emailExistente) {
+      throw new Error('Email já cadastrado');
+    }
+
     const usuarioCriado = await Usuario.create(dadosCriacao);
 
     const validacaoSaida = UsuarioOutputSchema.safeParse(usuarioCriado.toObject());

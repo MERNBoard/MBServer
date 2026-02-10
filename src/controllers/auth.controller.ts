@@ -38,6 +38,9 @@ class AuthController {
       if (error instanceof Error && error.message.includes('Erro de validação')) {
         return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
       }
+      if (error instanceof Error && error.message.includes('Email já cadastrado')) {
+        return res.status(StatusCodes.CONFLICT).json({ error: error.message });
+      }
       console.error('Erro no registro:', error);
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Erro no servidor ao processar registro' });
     }

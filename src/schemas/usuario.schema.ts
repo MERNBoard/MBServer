@@ -1,8 +1,6 @@
 import * as z from 'zod';
 import { UsuarioRole } from '@/types/enums';
 
-const isoDateString = z.iso.datetime();
-
 
 export const UsuarioInputSchema = z
   .object({
@@ -42,15 +40,15 @@ export const UsuarioUpdateInputSchema = z
 
 export const UsuarioOutputSchema = z
   .object({
-    _id: z.string(),
+    _id: z.preprocess((val) => String(val), z.string()),
     nome: z.string(),
     email: z.email(),
     passwordHash: z.string(),
     usuarioRole: z.enum(UsuarioRole),
-    criadoEm: isoDateString,
-    atualizadoEm: isoDateString,
+    criadoEm: z.coerce.date().transform((dt) => dt.toISOString()),
+    atualizadoEm: z.coerce.date().transform((dt) => dt.toISOString()),
+    __v: z.any().optional(),
   })
-  .strict()
   .transform((data) => ({
     id: data._id,
     nome: data.nome,
@@ -59,4 +57,4 @@ export const UsuarioOutputSchema = z
     usuarioRole: data.usuarioRole,
     criadoEm: data.criadoEm,
     atualizadoEm: data.atualizadoEm,
-  }))
+  }));
