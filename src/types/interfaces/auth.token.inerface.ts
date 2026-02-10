@@ -1,5 +1,5 @@
 import type { Types } from 'mongoose';
-import type { TokenTipo } from '../enums';
+import type { TokenTipo, UsuarioRole } from '../enums';
 
 export interface IAuthToken {
   usuarioID: Types.ObjectId;
@@ -17,4 +17,15 @@ export interface IAuthToken {
 
   criadoEm: Date;
   atualizadoEm: Date;
+}
+
+export interface UsuarioPayload {
+  id: string;
+  email: string;
+  usuarioRole: UsuarioRole;
+}
+
+export interface UsuarioAuthToken {
+  accessToken: string;
+  refreshToken: string;
 }
