@@ -7,6 +7,8 @@ import type { IUsuario } from '@/types/interfaces';
 
 import type { UsuarioUpdate } from '@/types/types';
 
+const SALT = process.env.BCRYPT_SALT_ROUNDS ? parseInt(String(process.env.BCRYPT_SALT_ROUNDS), 10) : 10;
+
 const usuarioSchema: Schema<IUsuario> = new Schema<IUsuario>(
   {
     nome: { type: String, required: true },
@@ -31,7 +33,7 @@ const usuarioSchema: Schema<IUsuario> = new Schema<IUsuario>(
 usuarioSchema.pre('save', async function () {
   if (!this.isModified('passwordHash')) return;
 
-  this.passwordHash = await bcrypt.hash(this.passwordHash, 10);
+  this.passwordHash = await bcrypt.hash(this.passwordHash, SALT);
   this.atualizadoEm = new Date();
 });
 
@@ -41,7 +43,7 @@ usuarioSchema.pre('findOneAndUpdate', async function () {
   if (!update) return;
 
   if (update.$set?.passwordHash) {
-    update.$set.passwordHash = await bcrypt.hash(update.$set.passwordHash, 10);
+    update.$set.passwordHash = await bcrypt.hash(update.$set.passwordHash, SALT);
   }
 
   if (!update.$set) update.$set = {};
