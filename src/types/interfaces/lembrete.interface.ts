@@ -6,7 +6,7 @@ export interface ILembrete extends Document {
 
   relembradoEm: Date;
   enviado: boolean;
-  enciadoEm?: Date;
+  enviadoEm?: Date;
 
   criadoEm: Date;
   atualizadoEm: Date;

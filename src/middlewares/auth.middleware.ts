@@ -33,7 +33,7 @@ class AuthMiddleware {
         return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
       }
       if (error instanceof Error && error.message.includes('Token de acesso não fornecido')) {
-        return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
+        return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
       }
       if (error instanceof Error && error.message.includes('Formato de token inválido')) {
         return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });

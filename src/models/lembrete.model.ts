@@ -8,7 +8,7 @@ const lembreteSchema: Schema<ILembrete> = new Schema<ILembrete>(
 
     relembradoEm: { type: Date, required: true },
     enviado: { type: Boolean, default: false },
-    enciadoEm: { type: Date, required: false },
+    enviadoEm: { type: Date, required: false },
   },
   {
     timestamps: {

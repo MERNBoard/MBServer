@@ -9,10 +9,10 @@ const tarefaSchema: Schema<ITarefa> = new Schema<ITarefa>(
     titulo: { type: String, required: true },
     descricao: { type: String, required: false },
 
-    status: { type: String, enum: Object.values(TarefaStatus), required: true },
-    prioridade: { type: String, enum: Object.values(TarefaPrioridade), required: true },
+    status: { type: String, enum: Object.values(TarefaStatus), required: true, default: TarefaStatus.PENDENTE },
+    prioridade: { type: String, enum: Object.values(TarefaPrioridade), required: false, default: TarefaPrioridade.MEDIA },
 
-    categorias: { type: String, required: false },
+    categoria: { type: String, required: false },
     tags: { type: [String], required: false },
 
     deadline: { type: Date, required: false },

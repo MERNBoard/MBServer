@@ -1,21 +1,27 @@
-import type { Document, Types } from 'mongoose';
+import type { Types } from 'mongoose';
 import type { TarefaPrioridade, TarefaStatus } from '../enums';
 
-export interface ITarefa extends Document {
+export interface ITarefa {
+  _id: Types.ObjectId; // Interface do dado no banco
   usuarioID: Types.ObjectId;
-
   titulo: string;
   descricao?: string;
-
   status: TarefaStatus;
   prioridade: TarefaPrioridade;
-
-  categorias?: string;
+  categoria?: string;
   tags?: string[];
-
   deadline?: Date;
-  completadaEm: Date;
-
+  completadaEm?: Date;
   criadoEm: Date;
-  autalizadoEm: Date;
+  atualizadoEm: Date;
+}
+
+export interface ITarefaInput {
+  titulo: string;
+  descricao?: string;
+  status?: TarefaStatus;
+  prioridade?: TarefaPrioridade;
+  categoria?: string;
+  tags?: string[];
+  deadline?: Date;
 }
