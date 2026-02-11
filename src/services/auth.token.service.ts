@@ -7,7 +7,6 @@ import {
 } from '@/schemas';
 import type { UsuarioLogadoPayload, UsuarioPayload } from '@/types/interfaces';
 import type { UsuarioLoginInput, UsuarioRegisterInput } from '@/types/types';
-
 import UsuarioService from './usuario.service';
 
 class AuthTokenService {
@@ -37,14 +36,19 @@ class AuthTokenService {
     if (error instanceof Error && error.name === 'TokenExpiredError') {
       throw new Error('Token de acesso expirado');
     }
-    console.error('Ocorreu um erro no TokenService:', error instanceof Error ? error.message : error);
+    console.error(
+      'Ocorreu um erro no TokenService:',
+      error instanceof Error ? error.message : error,
+    );
     throw error;
   }
 
-  pegarTokenDoHeader(authHeader: string | undefined): string | null {
-    if (!authHeader) return null;
+  pegarTokenDoHeader(authHeader: string | undefined): string | never {
+    if (!authHeader) throw new Error('Token de acesso não fornecido');
     const [scheme, token] = authHeader.split(' ');
-    if (scheme !== 'Bearer' || !token) return null;
+    if (scheme !== 'Bearer' || !token) {
+      throw new Error("Formato de token inválido. O formato esperado é: 'Bearer <token>'");
+    }
     return token;
   }
 
@@ -66,7 +70,7 @@ class AuthTokenService {
     }
   }
 
-  async registrar(usuario: UsuarioRegisterInput): Promise<{ accessToken: string }> {
+  async registrar(usuario: UsuarioRegisterInput): Promise<{ accessToken: string }> | never {
     const validacao = UsuarioRegisterInputSchema.safeParse(usuario);
 
     if (!validacao.success) {

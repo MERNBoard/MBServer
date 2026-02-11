@@ -22,7 +22,6 @@ app.get('/', (_req: Request, res: Response): Response => {
 app.post(
   '/auth/login',
   AuthMiddleware.desabilitarCache,
-  AuthMiddleware.autenticarTokenAPI,
   AuthController.login
 );
 

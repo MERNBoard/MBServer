@@ -12,7 +12,7 @@ class AuthController {
 
     try {
       const tokens = await AuthTokenService.login({ email, password });
-      return res.json(tokens);
+      return res.status(StatusCodes.OK).json(tokens);
     } catch (error) {
       if (error instanceof Error && error.message.includes('Credenciais inválidas')) {
         return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
@@ -25,15 +25,16 @@ class AuthController {
   };
 
   registrar = async (req: Request, res: Response) => {
-    const { nome, email, password } = req.body;
-
-    if (!nome || !email || !password) {
-      return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Nome, email e senha são obrigatórios' });
-    }
-
     try {
-      const tokens = await AuthTokenService.registrar({ nome, email, password });
-      return res.status(StatusCodes.CREATED).json(tokens);
+      const { nome, email, password } = req.body;
+
+      if (!nome || !email || !password) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Nome, email e senha são obrigatórios' });
+      }
+      await AuthTokenService.registrar({ nome, email, password });
+      return res.status(StatusCodes.CREATED).json({
+        message: 'Usuário registrado com sucesso! Realize o login para obter seu token de acesso.'
+      });
     } catch (error) {
       if (error instanceof Error && error.message.includes('Erro de validação')) {
         return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
