@@ -1,14 +1,15 @@
 {
   "name": "mbserver",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "./dist/server.js",
   "repository": "https://github.com/MERNBoard/MBServer.git",
   "author": "9erikSantos6 <9xerix6@gmail.com>",
   "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsup src/server.ts --format cjs,esm --clean",
+    "build": "yarn typecheck && tsup src/server.ts --format esm --clean --minify --no-sourcemap --target node20",
+    "start": "node dist/server.js",
     "lint": "biome check .",
     "format": "biome format",
     "typecheck": "tsc --noEmit"
