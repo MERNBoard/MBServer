@@ -6,9 +6,12 @@ import { conectarMongo, config } from '@/config';
 import { AuthController, TarefaController } from '@/controllers';
 import { AuthMiddleware } from '@/middlewares';
 
-const app: Express = express();
+import { EnvValue } from '@/types/enums';
 
 await conectarMongo();
+
+const app: Express = express();
+
 
 app.use(cors());
 app.use(express.json());
@@ -66,6 +69,11 @@ app.delete(
   TarefaController.deletarTarefa
 );
 
-app.listen(config.PORT, () => {
-  console.log(`MBServer rodando em ==> http://localhost:${config.PORT}/`);
-});
+
+if (config.NODE_ENV !== EnvValue.PROD) {
+  app.listen(config.PORT, () => {
+    console.log(`Servidor rodando em http://localhost:${config.PORT}`);
+  });
+}
+
+export default app;
