@@ -106,7 +106,7 @@ src/
 
 ## Documentação da API
 
-A documentação completa das rotas está disponível em [API_DOCUMENTATION.md](./wiki/API_DOCUMENTATION.md).
+A documentação completa das rotas está disponível em [API_DOCUMENTATION.md](./wiki/API).
 
 ### Endpoints Principais
 
@@ -203,5 +203,5 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ## Links
 
-- [Documentação da API](./API_DOCUMENTATION.md)
+- [Documentação da API](./wiki/API)
 - [Repositório](https://github.com/MERNBoard/MBServer)
