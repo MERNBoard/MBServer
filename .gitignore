@@ -3,6 +3,10 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# Build
+dist/*
+
+
 # User-specific files
 *.rsuser
 *.suo
@@ -10,6 +14,7 @@
 *.userosscache
 *.sln.docstates
 *.env
+
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -416,3 +421,5 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+.vercel
+.env*.local
