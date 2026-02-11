@@ -62,7 +62,7 @@ JWT_ACCESS_SECRET=seu_secret_super_seguro_aqui
 BCRYPT_SALT_ROUNDS=10
 ```
 
-5. Inicie o servidor:
+5. Inicie o servidor em desenvolvimento:
 ```bash
 yarn dev
 ```
@@ -71,11 +71,24 @@ O servidor estará rodando em `http://localhost:3000`
 
 ## Scripts
 
-- `yarn dev` - Inicia o servidor em modo desenvolvimento com hot reload
-- `yarn build` - Compila o projeto para produção
+- `yarn dev` - Inicia o servidor em modo desenvolvimento com hot reload (tsx watch)
+- `yarn build` - Compila o projeto para produção (tsup com minificação)
+- `yarn start` - Inicia o servidor em produção (requer build)
 - `yarn lint` - Executa o linter (Biome)
 - `yarn format` - Formata o código
 - `yarn typecheck` - Verifica tipos TypeScript
+
+## Build para Produção
+
+```bash
+# Compilar o projeto
+yarn build
+
+# Iniciar o servidor compilado
+yarn start
+```
+
+O build gera um arquivo otimizado e minificado em `dist/server.js`.
 
 ## Estrutura do Projeto
 
