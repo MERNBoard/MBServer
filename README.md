@@ -106,7 +106,7 @@ src/
 
 ## Documentação da API
 
-A documentação completa das rotas está disponível em [API_DOCUMENTATION.md](./wiki/API).
+A documentação completa das rotas está disponível em [Documentação da API](./wiki/API).
 
 ### Endpoints Principais
 
