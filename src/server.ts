@@ -70,7 +70,7 @@ app.delete(
 );
 
 
-if (config.NODE_ENV !== EnvValue.PROD) {
+if (config.NODE_ENV !== EnvValue.PRODUCTION) {
   app.listen(config.PORT, () => {
     console.log(`Servidor rodando em http://localhost:${config.PORT}`);
   });
