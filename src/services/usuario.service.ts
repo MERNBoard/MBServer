@@ -1,6 +1,7 @@
+import { StatusCodes } from 'http-status-codes';
 import * as z from 'zod';
+import { AppError } from '@/core/errors';
 import Usuario from '@/models/usuario.model';
-
 import {
   UsuarioOutputSchema,
   UsuarioRegisterInputSchema,
@@ -13,41 +14,46 @@ class UsuarioService {
   async criarUsuario(dados: UsuarioRegisterInput): Promise<UsuarioOutput> {
     const validacao = UsuarioRegisterInputSchema.safeParse(dados);
     if (!validacao.success) {
-      throw new Error(`Erro de validação: ${validacao.error.message}`);
+      throw new AppError(`Erro de validação: ${validacao.error.message}`, StatusCodes.BAD_REQUEST);
     }
 
-    const dadosCriacao = {
-      nome: validacao.data.nome,
-      email: validacao.data.email,
-      passwordHash: validacao.data.password,
-    };
+    const { email, nome, password: passwordHash } = validacao.data;
 
-    const emailExistente = await Usuario.findOne({ email: dadosCriacao.email }).lean();
-
+    const emailExistente = await Usuario.findOne({ email }).lean();
     if (emailExistente) {
-      throw new Error('Email já cadastrado');
+      throw new AppError('Email já cadastrado', StatusCodes.CONFLICT);
     }
 
-    const usuarioCriado = await Usuario.create(dadosCriacao);
+    const usuarioCriado = await Usuario.create({
+      nome,
+      email,
+      passwordHash,
+    });
 
     const validacaoSaida = UsuarioOutputSchema.safeParse(usuarioCriado.toObject());
-
     if (!validacaoSaida.success) {
-      throw new Error(`Erro de validação de saída: ${validacaoSaida.error.message}`);
+      throw new AppError(
+        'Erro interno ao processar dados do usuário criado',
+        StatusCodes.INTERNAL_SERVER_ERROR,
+      );
     }
 
     return validacaoSaida.data;
   }
 
-  async buscarUsuarioPorId(id: string): Promise<UsuarioOutput | null> {
+  async buscarUsuarioPorId(id: string): Promise<UsuarioOutput> {
     const usuario = await Usuario.findById(id).lean();
 
-    if (!usuario) return null;
+    if (!usuario) {
+      throw new AppError('Usuário não encontrado', StatusCodes.NOT_FOUND);
+    }
 
     const validacaoSaida = UsuarioOutputSchema.safeParse(usuario);
-
     if (!validacaoSaida.success) {
-      throw new Error(`Erro de validação de saída: ${validacaoSaida.error.message}`);
+      throw new AppError(
+        'Erro interno na estrutura do usuário encontrado',
+        StatusCodes.INTERNAL_SERVER_ERROR,
+      );
     }
 
     return validacaoSaida.data;
@@ -59,30 +65,27 @@ class UsuarioService {
     if (!usuario) return null;
 
     const validacaoSaida = UsuarioOutputSchema.safeParse(usuario);
-
     if (!validacaoSaida.success) {
-      throw new Error(`Erro de validação de saída: ${validacaoSaida.error.message}`);
+      throw new AppError(
+        'Erro interno na estrutura do usuário por e-mail',
+        StatusCodes.INTERNAL_SERVER_ERROR,
+      );
     }
 
     return validacaoSaida.data;
   }
 
-  async atualizarUsuario(id: string, dados: UsuarioUpdate): Promise<UsuarioOutput | null> {
+  async atualizarUsuario(id: string, dados: UsuarioUpdate): Promise<UsuarioOutput> {
     const validacao = UsuarioUpdateInputSchema.safeParse(dados);
-
     if (!validacao.success) {
-      throw new Error(`Erro de validação: ${validacao.error.message}`);
+      throw new AppError(`Erro de validação: ${validacao.error.message}`, StatusCodes.BAD_REQUEST);
     }
 
     const updateData: Record<string, unknown> = {};
-
     if (validacao.data.nome) updateData.nome = validacao.data.nome;
     if (validacao.data.email) updateData.email = validacao.data.email;
     if (validacao.data.usuarioRole) updateData.usuarioRole = validacao.data.usuarioRole;
-
-    if (validacao.data.password) {
-      updateData.passwordHash = validacao.data.password;
-    }
+    if (validacao.data.password) updateData.passwordHash = validacao.data.password;
 
     const usuarioAtualizado = await Usuario.findByIdAndUpdate(
       id,
@@ -90,26 +93,34 @@ class UsuarioService {
       { new: true },
     ).lean();
 
-    if (!usuarioAtualizado) return null;
+    if (!usuarioAtualizado) {
+      throw new AppError('Usuário não encontrado para atualização', StatusCodes.NOT_FOUND);
+    }
 
     const validacaoSaida = UsuarioOutputSchema.safeParse(usuarioAtualizado);
-
     if (!validacaoSaida.success) {
-      throw new Error(`Erro de validação de saída: ${validacaoSaida.error.message}`);
+      throw new AppError(
+        'Erro interno ao validar dados atualizados do usuário',
+        StatusCodes.INTERNAL_SERVER_ERROR,
+      );
     }
 
     return validacaoSaida.data;
   }
 
-  async deletarUsuario(id: string): Promise<UsuarioOutput | null> {
+  async deletarUsuario(id: string): Promise<UsuarioOutput> {
     const usuarioDeletado = await Usuario.findByIdAndDelete(id).lean();
 
-    if (!usuarioDeletado) return null;
+    if (!usuarioDeletado) {
+      throw new AppError('Usuário não encontrado para exclusão', StatusCodes.NOT_FOUND);
+    }
 
     const validacaoSaida = UsuarioOutputSchema.safeParse(usuarioDeletado);
-
     if (!validacaoSaida.success) {
-      throw new Error(`Erro de validação de saída: ${validacaoSaida.error.message}`);
+      throw new AppError(
+        'Erro interno ao processar exclusão do usuário',
+        StatusCodes.INTERNAL_SERVER_ERROR,
+      );
     }
 
     return validacaoSaida.data;
@@ -119,9 +130,11 @@ class UsuarioService {
     const usuarios = await Usuario.find().lean();
 
     const validacaoSaida = z.array(UsuarioOutputSchema).safeParse(usuarios);
-
     if (!validacaoSaida.success) {
-      throw new Error(`Erro de validação de saída: ${validacaoSaida.error.message}`);
+      throw new AppError(
+        'Erro interno ao listar todos os usuários',
+        StatusCodes.INTERNAL_SERVER_ERROR,
+      );
     }
 
     return validacaoSaida.data;

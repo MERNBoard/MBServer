@@ -1,51 +1,41 @@
 import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import { AppError } from '@/core/errors';
 import { AuthTokenService } from '@/services';
 
 class AuthController {
   login = async (req: Request, res: Response) => {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Email e senha são obrigatórios' });
-    }
-
     try {
-      const tokens = await AuthTokenService.login({ email, password });
+      const tokens = await AuthTokenService.login(req.body);
+
       return res.status(StatusCodes.OK).json(tokens);
-    } catch (error) {
-      if (error instanceof Error && error.message.includes('Credenciais inválidas')) {
-        return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
-      }
-      console.error('Erro no login:', error);
-      return res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ error: 'Erro no servidor ao processar login' });
+    } catch (error: unknown) {
+      this._tratarErro(res, error, 'Erro no login');
     }
   };
 
   registrar = async (req: Request, res: Response) => {
     try {
-      const { nome, email, password } = req.body;
+      await AuthTokenService.registrar(req.body);
 
-      if (!nome || !email || !password) {
-        return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Nome, email e senha são obrigatórios' });
-      }
-      await AuthTokenService.registrar({ nome, email, password });
       return res.status(StatusCodes.CREATED).json({
-        message: 'Usuário registrado com sucesso! Realize o login para obter seu token de acesso.'
+        message: 'Usuário registrado com sucesso! Realize o login para obter seu token de acesso.',
       });
-    } catch (error) {
-      if (error instanceof Error && error.message.includes('Erro de validação')) {
-        return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
-      }
-      if (error instanceof Error && error.message.includes('Email já cadastrado')) {
-        return res.status(StatusCodes.CONFLICT).json({ error: error.message });
-      }
-      console.error('Erro no registro:', error);
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Erro no servidor ao processar registro' });
+    } catch (error: unknown) {
+      this._tratarErro(res, error, 'Erro no registro');
     }
   };
+
+  private _tratarErro(res: Response, error: unknown, context: string) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({ error: error.message });
+    }
+    console.error(`[${context.toUpperCase()}]:`, error);
+
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      error: 'Erro interno no servidor',
+    });
+  }
 }
 
 export default new AuthController();

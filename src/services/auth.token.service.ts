@@ -1,5 +1,8 @@
 import bcrypt from 'bcrypt';
+import { StatusCodes } from 'http-status-codes';
 import jwt from 'jsonwebtoken';
+import { config } from '@/config';
+import { AppError } from '@/core/errors';
 import {
   UsuarioLoginInputSchema,
   UsuarioOutputSchema,
@@ -13,11 +16,10 @@ class AuthTokenService {
   private JWT_ACCESS_SECRET: string;
 
   constructor() {
-    if (!process.env.JWT_ACCESS_SECRET) {
+    if (!config.JWT_ACCESS_SECRET) {
       throw new Error('JWT_ACCESS_SECRET deve ser configurado no ambiente');
     }
-
-    this.JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
+    this.JWT_ACCESS_SECRET = config.JWT_ACCESS_SECRET;
   }
 
   private _gerarAccessToken(payload: UsuarioPayload): string {
@@ -33,35 +35,46 @@ class AuthTokenService {
   }
 
   private _tratarErro(error: unknown): never {
-    if (error instanceof Error && error.name === 'TokenExpiredError') {
-      throw new Error('Token de acesso expirado');
+    if (error instanceof jwt.TokenExpiredError) {
+      throw new AppError('Token de acesso expirado', StatusCodes.UNAUTHORIZED);
     }
-    console.error(
-      'Ocorreu um erro no TokenService:',
-      error instanceof Error ? error.message : error,
-    );
-    throw error;
+
+    if (error instanceof jwt.JsonWebTokenError || error instanceof SyntaxError) {
+      throw new AppError('Token de acesso inválido ou malformado', StatusCodes.UNAUTHORIZED);
+    }
+
+    if (error instanceof AppError) throw error;
+
+    throw new AppError('Erro interno na verificação do token', StatusCodes.INTERNAL_SERVER_ERROR);
   }
 
-  pegarTokenDoHeader(authHeader: string | undefined): string | never {
-    if (!authHeader) throw new Error('Token de acesso não fornecido');
-    const [scheme, token] = authHeader.split(' ');
-    if (scheme !== 'Bearer' || !token) {
-      throw new Error("Formato de token inválido. O formato esperado é: 'Bearer <token>'");
+  pegarTokenDoHeader(authHeader: string | undefined): string {
+    if (!authHeader) {
+      throw new AppError('Token de acesso não fornecido', StatusCodes.UNAUTHORIZED);
     }
+
+    const [scheme, token] = authHeader.split(' ');
+
+    if (scheme !== 'Bearer' || !token) {
+      throw new AppError(
+        "Formato de token inválido. O formato esperado é: 'Bearer <token>'",
+        StatusCodes.BAD_REQUEST,
+      );
+    }
+
     return token;
   }
 
   desencriptarAccessToken(accessToken: string): UsuarioLogadoPayload {
     if (!accessToken) {
-      throw new Error('Token de acesso não fornecido!');
+      throw new AppError('Token de acesso não fornecido!', StatusCodes.UNAUTHORIZED);
     }
 
     try {
       const decoded = jwt.verify(accessToken, this.JWT_ACCESS_SECRET);
 
       if (typeof decoded === 'string') {
-        throw new Error('Token inválido');
+        throw new AppError('Payload do token inválido', StatusCodes.UNAUTHORIZED);
       }
 
       return decoded as UsuarioLogadoPayload;
@@ -70,18 +83,21 @@ class AuthTokenService {
     }
   }
 
-  async registrar(usuario: UsuarioRegisterInput): Promise<{ accessToken: string }> | never {
+  async registrar(usuario: UsuarioRegisterInput): Promise<{ accessToken: string }> {
     const validacao = UsuarioRegisterInputSchema.safeParse(usuario);
 
     if (!validacao.success) {
-      throw new Error(`Erro de validação: ${validacao.error.message}`);
+      throw new AppError(`Erro de validação: ${validacao.error.message}`, StatusCodes.BAD_REQUEST);
     }
 
     const usuarioCriado = await UsuarioService.criarUsuario(validacao.data);
     const usuarioSafe = UsuarioOutputSchema.safeParse(usuarioCriado);
 
     if (!usuarioSafe.success) {
-      throw new Error(`Erro de validação de saída: ${usuarioSafe.error.message}`);
+      throw new AppError(
+        'Erro interno ao processar dados do novo usuário',
+        StatusCodes.INTERNAL_SERVER_ERROR,
+      );
     }
 
     const payload: UsuarioPayload = {
@@ -97,19 +113,19 @@ class AuthTokenService {
     const validacao = UsuarioLoginInputSchema.safeParse(data);
 
     if (!validacao.success) {
-      throw new Error(`Erro de validação: ${validacao.error.message}`);
+      throw new AppError('Dados de login malformados', StatusCodes.BAD_REQUEST);
     }
 
     const usuario = await UsuarioService.buscarUsuarioPorEmail(validacao.data.email);
 
     if (!usuario) {
-      throw new Error('Credenciais inválidas');
+      throw new AppError('Credenciais inválidas', StatusCodes.UNAUTHORIZED);
     }
 
     const senhaValida = await bcrypt.compare(validacao.data.password, usuario.passwordHash);
 
     if (!senhaValida) {
-      throw new Error('Credenciais inválidas');
+      throw new AppError('Credenciais inválidas', StatusCodes.UNAUTHORIZED);
     }
 
     const payload: UsuarioPayload = {
