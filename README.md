@@ -33,7 +33,7 @@ MBServer é a API do MERNBoard, um sistema completo de gerenciamento de tarefas 
 ### Pré-requisitos
 
 - Node.js 18 ou superior
-- MongoDB 4.4 ou superior
+- MongoDB 4.4 ou superior (rodando localmente para DEV/TEST)
 - Yarn ou npm
 
 ### Configuração
@@ -49,20 +49,32 @@ cd MBServer
 yarn install
 ```
 
-3. Configure as variáveis de ambiente:
+3. **Inicie o MongoDB localmente** (necessário para DEV/TEST):
+```bash
+# Linux/macOS
+mongod
+
+# Ou com Docker
+docker run -d -p 27017:27017 --name mongodb mongo:latest
+```
+
+4. Configure as variáveis de ambiente:
 ```bash
 cp .env.example .env
 ```
 
-4. Edite o arquivo `.env` com suas configurações:
+5. Edite o arquivo `.env` com suas configurações:
 ```env
+NODE_ENV=DEVELOPMENT
 PORT=3000
-MONGO_URI=mongodb://localhost:27017/mbserver
+MONGO_CONNECTION_STRING=mongodb://localhost:27017/mbserver
 JWT_ACCESS_SECRET=seu_secret_super_seguro_aqui
 BCRYPT_SALT_ROUNDS=10
 ```
 
-5. Inicie o servidor em desenvolvimento:
+**Nota:** Em modo PRODUCTION, a variável `MONGO_CONNECTION_STRING` é obrigatória.
+
+6. Inicie o servidor em desenvolvimento:
 ```bash
 yarn dev
 ```
